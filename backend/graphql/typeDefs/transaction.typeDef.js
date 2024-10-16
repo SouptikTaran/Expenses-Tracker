@@ -1,4 +1,3 @@
-
 const transactionTypeDef = `#graphql
   type Transaction {
     _id: ID!

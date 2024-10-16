@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import RadioButton from "../components/RadioButton";
-import InputField from "../Components/InputField";
+import InputField from "../components/InputField";
 import { useMutation } from "@apollo/client";
 import { SIGN_UP } from "../graphql/mutations/user.mutation";
 import toast from "react-hot-toast";
@@ -14,24 +15,22 @@ const SignUpPage = () => {
 		gender: "",
 	});
 
-	const [signup ,{loading , error}] = useMutation(SIGN_UP ,{
-		refetchQueries: ["GetAunthenticatedUser"]
-	})
+	const [signup, { loading }] = useMutation(SIGN_UP, {
+		refetchQueries: ["GetAuthenticatedUser"],
+	});
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
 			await signup({
-				variables:{
-					input: signUpData
-				}
-			})
+				variables: {
+					input: signUpData,
+				},
+			});
 		} catch (error) {
-			console.error("Error:" , error);
+			console.error("Error:", error);
 			toast.error(error.message);
 		}
-		
-		console.log(signUpData);
 	};
 
 	const handleChange = (e) => {
@@ -49,8 +48,6 @@ const SignUpPage = () => {
 			}));
 		}
 	};
-
-
 
 	return (
 		<div className='h-screen flex justify-center items-center'>

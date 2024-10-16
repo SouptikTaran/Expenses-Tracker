@@ -29,6 +29,7 @@ import passport from "passport";
 import session from "express-session";
 import connectMongo from "connect-mongodb-session";
 import { configurePassport } from "./passport/passport.config.js";
+import job from "./cron.js";
 
 
 import { ApolloServer } from "@apollo/server";
@@ -52,6 +53,7 @@ const store = new MongoDBStore({
 })
 
 store.on("error" , (err) => console.error(err))
+job.start()
 
 
 app.use(
@@ -88,7 +90,7 @@ app.use(
     express.json(),
     expressMiddleware(server ,{
         context: async ({ req, res }) => {
-            console.log("Request session data:", req.session);  // Log session data to verify it's being passed correctly
+            // console.log("Request session data:", req.session);  // Log session data to verify it's being passed correctly
             return buildContext({ req, res });
           },
         
