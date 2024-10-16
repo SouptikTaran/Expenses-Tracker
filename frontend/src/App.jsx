@@ -2,7 +2,7 @@ import Header from "./components/Header";
 import { Navigate, Route , Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./Pages/SignUpPage";
+import SignUpPage from "./pages/SignUpPage";
 import TransactionPage from "./pages/TransactionPage";
 import NotFound from "./pages/NotFound";
 import { useQuery } from "@apollo/client";
