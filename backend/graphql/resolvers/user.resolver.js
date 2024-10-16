@@ -14,7 +14,7 @@ const userResolver = {
         },
         user: async(_, { userId }) => {
             try {
-                const user = await User.findById(userId); 
+                const user = await User.findById(userId);    
             } catch (error) {
                 console.error("Error in user query: " , error);
                 throw new Error(error.message || "Internal Server Error")
@@ -69,10 +69,10 @@ const userResolver = {
         logout: async(_, __, context) => {
             try {
                 await context.logout();
-                req.session.destroy((err) => {
+                context.req.session.destroy((err) => {
                     if(err) throw err;
                 })
-                res.clearCookie("connect.sid");
+                context.res.clearCookie("connect.sid");
                 return {message : "Logged Out Successfully"}
             } catch (error) {
                 console.error("Error in logout: ", error);

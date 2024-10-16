@@ -1,42 +1,50 @@
 import passport from "passport";
 import bcrypt from "bcryptjs";
-
 import User from "../models/user.model.js";
 import { GraphQLLocalStrategy } from "graphql-passport";
 
 export const configurePassport = async () => {
-	passport.serializeUser((user, done) => {
-		console.log("Serializing user");
-		done(null, user.id);
-	});
+    passport.serializeUser((user, done) => {
 
-	passport.deserializeUser(async (id, done) => {
-		console.log("Deserializing user");
-		try {
-			const user = await User.findById(id);
-			done(null, user);
-		} catch (err) {
-			done(err);
-		}
-	});
+        // Check if user is a Promise and resolve if necessary
+        if (user instanceof Promise) {
+            user.then(resolvedUser => {
+                done(null, resolvedUser._id);
+            }).catch(err => {
+                done(err);
+            });
+        } else {
+            done(null, user._id);
+        }
+    });
 
-	passport.use(
-		new GraphQLLocalStrategy(async (username, password, done) => {
-			try {
-				const user = await User.findOne({ username });
-				if (!user) {
-					throw new Error("Invalid username or password");
-				}
-				const validPassword = await bcrypt.compare(password, user.password);
+    passport.deserializeUser(async (id, done) => {
+        try {
+            const user = await User.findById(id);
+            done(null, user);
+        } catch (err) {
+            done(err);
+        }
+    });
 
-				if (!validPassword) {
-					throw new Error("Invalid username or password");
-				}
+    passport.use(
+        new GraphQLLocalStrategy(async (username, password, done) => {
+            try {
+                const user = await User.findOne({ username });
+                if (!user) {
+					throw new Error("Invalid username or password")
+                }
+				
+                const validPassword = await bcrypt.compare(password, user.password);
+                if (!validPassword) {
+					throw new Error("Invalid username or password")
+                }
 
-				return done(null, user);
-			} catch (err) {
-				return done(err);
-			}
-		})
-	);
+                // console.log("Authenticated user:", user);
+                return done(null, user);
+            } catch (err) {
+                return done(err);
+            }
+        })
+    );
 };

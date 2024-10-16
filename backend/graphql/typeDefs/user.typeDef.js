@@ -23,13 +23,13 @@ type Mutation{
 input SignUpInput{
     username: String!,
     name: String!,
-    passoword: String!,
+    password: String!,
     gender: String!
 }
 
 input LoginInput{
     username: String!,
-    passoword: String!
+    password: String!
 }
 
 type LogoutResponse{

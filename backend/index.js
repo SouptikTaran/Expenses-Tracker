@@ -28,6 +28,7 @@ dotenv.config()
 import passport from "passport";
 import session from "express-session";
 import connectMongo from "connect-mongodb-session";
+import { configurePassport } from "./passport/passport.config.js";
 
 
 import { ApolloServer } from "@apollo/server";
@@ -54,12 +55,12 @@ store.on("error" , (err) => console.error(err))
 
 
 app.use(
-	session({
-		secret: process.env.SESSION_SECRET,
+    session({
+        secret: process.env.SESSION_SECRET,
 		resave: false, // this option specifies whether to save the session to the store on every request
 		saveUninitialized: false, // option specifies whether to save uninitialized sessions
 		cookie: {
-			maxAge: 1000 * 60 * 60 * 24 * 7,
+            maxAge: 1000 * 60 * 60 * 24 * 7,
 			httpOnly: true, // this option prevents the Cross-Site Scripting (XSS) attacks
 		},
 		store: store,
@@ -68,6 +69,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+await configurePassport()
 
 const server = new ApolloServer({
     typeDefs: mergedTypeDefs,
@@ -78,13 +80,20 @@ const server = new ApolloServer({
 await server.start()
 
 app.use(
-    "/",
-    cors(),
+    "/graphql",
+    cors({
+        origin: "http://localhost:3000",
+        credentials: true,
+    }),
     express.json(),
     expressMiddleware(server ,{
-        context: async ({req , res}) => buildContext({req , res}) //it is shared between all resolvers as third arument
+        context: async ({ req, res }) => {
+            console.log("Request session data:", req.session);  // Log session data to verify it's being passed correctly
+            return buildContext({ req, res });
+          },
+        
     })
-);
+)
 await connectDB()
 
 await new Promise((resolve) => httpServer.listen({port : 4000 } , resolve));
