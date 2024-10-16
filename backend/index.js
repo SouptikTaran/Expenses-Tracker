@@ -21,7 +21,13 @@ import express from "express";
 import http from "http";
 import cors from "cors"
 import dotenv from "dotenv"
+import path from "path";
+import { fileURLToPath } from 'url';
 import { connectDB } from "./database/Mongo.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 dotenv.config()
 
@@ -96,6 +102,14 @@ app.use(
         
     })
 )
+
+// npm run build will build your frontend app, and it will the optimized version of your app
+app.use(express.static(path.join(__dirname, "frontend/dist")));
+
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
+});
+
 await connectDB()
 
 await new Promise((resolve) => httpServer.listen({port : 4000 } , resolve));
