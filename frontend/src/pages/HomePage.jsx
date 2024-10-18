@@ -18,7 +18,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const HomePage = () => {
 	const { data } = useQuery(GET_TRANSACTION_STATISTICS);
 	const { data: authUserData } = useQuery(GET_AUTHENTICATED_USER);
-	console.log()
 
 	const [logout, { loading, client }] = useMutation(LOGOUT, {
 		refetchQueries: ["GetAuthenticatedUser"],
@@ -28,7 +27,7 @@ const HomePage = () => {
 		labels: [],
 		datasets: [
 			{
-				label: "$",
+				label: "₹",
 				data: [],
 				backgroundColor: [],
 				borderColor: [],
@@ -78,8 +77,6 @@ const HomePage = () => {
 	const handleLogout = async () => {
 		try {
 			await logout();
-			// Clear the Apollo Client cache FROM THE DOCS
-			// https://www.apollographql.com/docs/react/caching/advanced-topics/#:~:text=Resetting%20the%20cache,any%20of%20your%20active%20queries
 			client.resetStore();
 		} catch (error) {
 			console.error("Error logging out:", error);

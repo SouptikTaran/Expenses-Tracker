@@ -10,10 +10,26 @@ const transactionTypeDef = `#graphql
     date: String!
     user: User!
   }
+  type TotalTransaction {
+  expenses: Float!
+  savings: Float!
+  investments: Float!
+  transactionCount: Float!
+}
+
+type TransactionHistory{
+  id: ID!
+  description: String!
+  amount: Float!
+  category: String
+  date: String!
+}
 
   type Query {
     transactions: [Transaction!]
     transaction(transactionId:ID!): Transaction
+    totalTransaction: TotalTransaction!
+    transactionHistory: [TransactionHistory]!
     categoryStatistics: [CategoryStatistics!]
   }
 

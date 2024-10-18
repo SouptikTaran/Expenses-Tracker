@@ -1,4 +1,4 @@
-// Standalone server
+    // Standalone server
 
 // import {ApolloServer} from "@apollo/server"
 // import {startStandaloneServer} from "@apollo/server/standalone"
@@ -35,7 +35,6 @@ import passport from "passport";
 import session from "express-session";
 import connectMongo from "connect-mongodb-session";
 import { configurePassport } from "./passport/passport.config.js";
-import job from "./cron.js";
 
 
 import { ApolloServer } from "@apollo/server";
@@ -59,7 +58,6 @@ const store = new MongoDBStore({
 })
 
 store.on("error" , (err) => console.error(err))
-job.start()
 
 
 app.use(
@@ -90,7 +88,7 @@ await server.start()
 app.use(
     "/graphql",
     cors({
-        origin: "http://localhost:5000",
+        origin: "http://localhost:3000",
         credentials: true,
     }),
     express.json(),

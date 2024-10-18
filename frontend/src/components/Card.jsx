@@ -23,7 +23,7 @@ const Card = ({ transaction, authUser }) => {
 	let { category, amount, location, date, paymentType, description } = transaction;
 	const cardClass = categoryColorMap[category];
 	const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION, {
-		refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
+		refetchQueries: ["GetTransactions", "GetTransactionStatistics" , "GetTotalTransactionDetails" , "GetTransactionHistory"],
 	});
 
 	// Capitalize the first letter of the description
@@ -36,6 +36,7 @@ const Card = ({ transaction, authUser }) => {
 	const handleDelete = async () => {
 		try {
 			await deleteTransaction({ variables: { transactionId: transaction._id } });
+
 			toast.success("Transaction deleted successfully");
 		} catch (error) {
 			console.error("Error deleting transaction:", error);

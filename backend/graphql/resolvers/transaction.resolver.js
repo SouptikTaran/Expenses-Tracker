@@ -31,14 +31,6 @@ const transactionResolver = {
 			const transactions = await Transaction.find({ userId });
 			const categoryMap = {};
 
-			// const transactions = [
-			// 	{ category: "expense", amount: 50 },
-			// 	{ category: "expense", amount: 75 },
-			// 	{ category: "investment", amount: 100 },
-			// 	{ category: "saving", amount: 30 },
-			// 	{ category: "saving", amount: 20 }
-			// ];
-
 			transactions.forEach((transaction) => {
 				if (!categoryMap[transaction.category]) {
 					categoryMap[transaction.category] = 0;
@@ -51,6 +43,55 @@ const transactionResolver = {
 			return Object.entries(categoryMap).map(([category, totalAmount]) => ({ category, totalAmount }));
 			// return [ { category: "expense", totalAmount: 125 }, { category: "investment", totalAmount: 100 }, { category: "saving", totalAmount: 50 } ]
 		},
+		totalTransaction: async (_, __, context) => {
+			try {
+				if (!context.getUser()) throw new Error("Unauthorized");
+				const userId = context.getUser()._id;
+				const transactions = await Transaction.find({ userId });
+
+				const totals = {
+					expenses: 0,
+					savings: 0,
+					investments: 0,
+					transactionCount: 0,
+				};
+				transactions.forEach(transaction => {
+					if (transaction.category === 'expense') {
+						totals.expenses += transaction.amount;
+					} else if (transaction.category === 'saving') {
+						totals.savings += transaction.amount;
+					} else if (transaction.category === 'investment') {
+						totals.investments += transaction.amount;
+					}
+					totals.transactionCount++;
+				});
+
+				return totals;
+			} catch (error) {
+				console.error("Error getting total transaction:", err);
+				throw new Error("Error getting total transaction");
+			}
+		},
+		transactionHistory: async (_, __, context) => {
+			try {
+				const userId = context.getUser()._id;
+				const transactions = await Transaction.find({ userId });
+
+				const results = transactions.map((transaction , index) => ({
+					id: index + 1, 
+					description: transaction.description,
+					amount: transaction.amount,
+					category: transaction.category || "other",
+					date: transaction.date
+				  }));
+
+				  return results;
+
+			} catch (error) {
+				console.error("Error getting  transaction History:", err);
+				throw new Error("Error getting transaction History");
+			}
+		}
 	},
 	Mutation: {
 		createTransaction: async (_, { input }, context) => {

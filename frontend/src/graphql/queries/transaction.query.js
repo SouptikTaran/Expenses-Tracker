@@ -41,3 +41,26 @@ export const GET_TRANSACTION_STATISTICS = gql`
 		}
 	}
 `;
+
+export const GET_TOTAL_TRANSACTION_DETAILS = gql`
+	query GetTotalTransactionDetails{
+		totalTransaction {
+    		expenses
+    		savings
+    		investments
+    		transactionCount
+	}
+  }
+`
+
+export const GET_TRANSACTION_HISTORY = gql`
+	query GetTransactionHistory{
+		transactionHistory {
+    		id
+    		description
+    		amount
+    		category
+    		date
+  }
+	}
+`
